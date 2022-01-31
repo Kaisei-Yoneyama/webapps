@@ -125,8 +125,7 @@ router.post(
             if (err instanceof multer.MulterError) {
               return res.render('edit', { user: req.user, application, data: req.body, error: err });
             } else if (err) {
-              return next(err);
-              // return res.render('edit', { user: req.user, application, data: req.body, error: err });
+              return res.render('edit', { user: req.user, application, data: req.body, error: err });
             } 
 
             if (req.body.name && req.body.description && req.body.repository && req.body.url && req.file) {
