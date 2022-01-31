@@ -8,7 +8,7 @@ block content
       if error
         hr.my-4
         p.text-danger #{error.message}
-  div.container.mt-2
+  div.container.my-2
     form(method="post" action=`/applications/${application.applicationId}?edit=1&_csrf=${csrfToken}` enctype="multipart/form-data")
       //- multipart/form-data では使えないらしい？クエリで送信して解決した
       //- input(type="hidden" name="_csrf" value!=csrfToken)
