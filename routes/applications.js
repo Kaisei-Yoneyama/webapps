@@ -49,12 +49,12 @@ router.get('/new', ensureAuthenticated, csrfProtection, (req, res, next) => {
 router.post('/',
   ensureAuthenticated,
   csrfProtection,
-  (req, res, next) => {
+  (_req, res, next) => {
     upload(req, res, (err) => {
       if (err instanceof multer.MulterError) {
-        return res.render('new', {user: req.user, data: req.body, error: err, csrfToken: req.csrfToken()});
+        return res.render('new', {user: req.user, data: req.body, error: err, csrfToken: _req.csrfToken()});
       } else if (err) {
-        return res.render('new', {user: req.user, data: req.body, error: err, csrfToken: req.csrfToken()});
+        return res.render('new', {user: req.user, data: req.body, error: err, csrfToken: _req.csrfToken()});
       } 
 
       if (req.body.name && req.body.description && req.body.repository && req.body.url && req.file) {
