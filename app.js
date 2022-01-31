@@ -87,8 +87,9 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: [`'self'`],
+      fontSrc: [`'self`, `cdn.jsdelivr.net`],
       imgSrc: [`'self'`, `cdn.jsdelivr.net`, `${BUCKET}.s3.${REGION}.amazonaws.com`],
-      styleSrc: [`'self'`, 'cdn.jsdelivr.net'],
+      styleSrc: [`'self'`, `cdn.jsdelivr.net`],
       scriptSrc: [`'self'`, `cdn.jsdelivr.net`],
     }
   })
