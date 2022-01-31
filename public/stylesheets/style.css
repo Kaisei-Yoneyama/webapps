@@ -1,8 +1,4 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
+img.card-img-top.index-page {
+  aspect-ratio: 16/9;
+  object-fit: cover;
 }

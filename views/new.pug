@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  div.bg-light.p-3.p-sm-5.mb-4.border-top
+    div.container
+      h1.display-4 作成
+      p.lead Web アプリの紹介を作成します。
+      if error
+        hr.my-4
+        p.text-danger #{error.message}
+  div.container.mt-2
+    form(method="post" action=`/applications` enctype="multipart/form-data")
+      div.mb-3
+        label.form-label(for="thumbnail") アプリのサムネイル
+        input#thumbnail.form-control(type="file" name="thumbnail" accept="image/*" aria-describedby="thumbnail-help" required)
+        div#thumbnail-help.form-text 推奨するアスペクト比は 16:9 です。1MB 以下の画像ファイルを添付してください。
+      div.mb-3
+        label.form-label(for="url") アプリの URL
+        input#url.form-control(type="url" name="url" maxlength="100" placeholder="100 字以内で入力してください" required)
+      div.mb-3
+        label.form-label(for="repository") GitHub リポジトリ
+        input#repository.form-control(type="url" name="repository" maxlength="100" placeholder="100 字以内で入力してください" required)
+      div.mb-3
+        label.form-label(for="name") アプリの名前
+        input#name.form-control(type="text" name="name" maxlength="100" placeholder="100 字以内で入力してください" required)
+      div.mb-3
+        label.form-label(for="description") アプリの説明
+        textarea#description.form-control(name="description" rows="5" maxlength="1000" placeholder="1000 字以内で入力してください" required)
+      button.btn.btn-primary.mr(type="submit") 公開

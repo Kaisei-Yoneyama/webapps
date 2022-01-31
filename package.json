@@ -3,14 +3,41 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "jest --testTimeout=10000 --forceExit"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.48.0",
+    "add": "^2.0.6",
     "cookie-parser": "~1.4.3",
+    "csurf": "1.8.3",
+    "dayjs": "1.10.4",
     "debug": "~2.6.9",
     "express": "~4.16.0",
+    "express-session": "1.13.0",
+    "express-validator": "^6.14.0",
+    "file-type": "16.5.3",
+    "helmet": "4.6.0",
     "http-errors": "~1.6.2",
     "morgan": "~1.9.0",
-    "pug": "2.0.0-beta11"
+    "multer": "^1.4.4",
+    "passport": "0.3.2",
+    "passport-github2": "^0.1.9",
+    "pg": "8.5.1",
+    "pg-hstore": "2.3.3",
+    "pug": "2.0.0-beta11",
+    "sequelize": "6.5.0",
+    "uuid": "3.3.2",
+    "yarn": "^1.22.17"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.10",
+    "jest": "25.1.0",
+    "passport-stub": "1.1.1",
+    "supertest": "3.1.0"
+  },
+  "engines": {
+    "node": ">=14"
   }
 }

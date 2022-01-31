@@ -1,0 +1,45 @@
+extends layout
+
+block content
+  div.container
+    div.card.my-4
+      img.card-img-top(src=application.applicationThumbnail alt="サムネイル")
+      div.card-body
+        h5.card-title #{application.applicationName}
+        p.card-text #{application.applicationDescription}
+      ul.list-group.list-group-flush
+        li.list-group-item 
+          i.bi.bi-person-square 
+          a.card-link.text-reset.text-decoration-none(href=`https://github.com/${application.user.userName}`) #{application.user.displayName || application.user.userName}
+        li.list-group-item 
+          i.bi.bi-code-square 
+          a.card-link.text-reset.text-decoration-none(href=application.applicationRepository) #{application.applicationRepository}
+        li.list-group-item 
+          i.bi.bi-arrow-up-right-square 
+          a.card-link.text-reset.text-decoration-none(href=application.applicationUrl) #{application.applicationUrl}
+      if user && user.userId == application.user.userId
+        div.card-body
+          a.card-link(href=`/applications/${application.applicationId}/edit`) 編集
+
+    if user
+      div.my-4
+        form(method="post" action=`/applications/${application.applicationId}/comments`)
+          div.mb-3
+            label.form-label(for="comment") コメント
+            textarea#comment.form-control(type="text" name="comment" rows="5" maxlength="1000" aria-describedby="comment-help" required)
+            div#comment-help.form-text 200 字以内で入力してください。
+          button.btn.btn-primary.mr(type="submit") 投稿
+
+    div.my-4
+      if comments.length
+        each comment in comments
+          div.card.mb-3
+            div.card-header
+              i.bi.bi-github 
+              a.text-reset.text-decoration-none(href=`https://github.com/${comment.user.userName}`) #{comment.user.userName}
+            div.card-body
+              p.card-text #{comment.comment}
+              if user && user.userId == comment.userId
+                form(method="post" action=`/applications/${application.applicationId}/comments/${comment.commentId}?delete=1`)
+                  button.btn.btn-danger(type="submit") 削除
+            div.card-footer.text-muted.d-inline #{comment.createdAt}

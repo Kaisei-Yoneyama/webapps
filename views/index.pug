@@ -1,5 +1,31 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div.bg-light.p-3.p-sm-5.mb-4.border-top
+    div.container
+      h1.display-4 WEBAPPS
+      p.lead WEBAPPS は作成した Web アプリケーションを紹介できるポートフォリオサービスです。
+      if user
+        hr.my-4
+        p さっそく Web ページや Web アプリを紹介しましょう！
+        a.btn.btn-primary.btn-lg(href="/applications/new" role="button") アプリを紹介する
+  div.container.mt-2
+    if applications.length
+      h1 作品一覧
+      p ランダムな順番で表示されています。
+        div.row.row-cols-1.row-cols-lg-2.g-4
+          each application in applications
+            div.col
+              div.card.h-100
+                img.card-img-top.index-page(src=application.applicationThumbnail alt="サムネイル")
+                div.card-body
+                  h5.card-title #{application.applicationName}
+                  p.card-text #{application.applicationDescription}
+                  a.btn.btn-primary(href=`/applications/${application.applicationId}`) 詳細表示
+                div.card-footer
+                  i.bi.bi-github 
+                  a.card-link.text-reset.text-decoration-none(href=`https://github.com/${application.user.userName}`) #{application.user.userName}
+                //- div.card-footer
+                //-   small.text-muted #{application.formattedCpdatedAt}
+    else
+      h1 まだ作品はありません
