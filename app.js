@@ -61,7 +61,7 @@ passport.use(new GitHubStrategy({
       User.upsert({
         userId: profile.id,
         userName: profile.username,
-        displayName: profile.displayName
+        displayName: profile.displayName || profile.username
       }).then((user) => {
         done(null, user[0].dataValues);
       }).catch((error) => {
