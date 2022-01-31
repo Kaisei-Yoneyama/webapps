@@ -1,12 +1,3 @@
-/*
-  TODO
-  - 例外処理
-  - 脆弱性対策
-  - Markdown 対応
-  - いいね実装
-*/
-
-
 'use strict';
 
 const express = require('express');
