@@ -10,6 +10,7 @@ block content
         p.text-danger #{error.message}
   div.container.mt-2
     form(method="post" action=`/applications/${application.applicationId}?edit=1` enctype="multipart/form-data")
+      input(type="hidden" name="_csrf" value!=csrfToken)
       div.mb-3
         label.form-label(for="thumbnail") アプリのサムネイル
         input#thumbnail.form-control(type="file" name="thumbnail" accept="image/*" aria-describedby="thumbnail-help" required)
@@ -31,4 +32,5 @@ block content
     h2.mt-4 ページを削除する
     p 削除したページはもとに戻せません。
     form.mt-2(method="post" action=`/applications/${application.applicationId}?delete=1`)
+      input(type="hidden" name="_csrf" value!=csrfToken)
       button.btn.btn-danger(type="submit") 削除
