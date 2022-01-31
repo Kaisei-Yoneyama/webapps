@@ -129,17 +129,20 @@ router.post(
             } 
 
             if (req.body.name && req.body.description && req.body.repository && req.body.url && req.file) {
-              s3Client.putObject(req.file.buffer).then((file) => {
-                application.update({
-                  applicationId: application.applicationId,
-                  applicationName: req.body.name.slice(0, 100),
-                  applicationDescription: req.body.description.slice(0, 1000),
-                  applicationRepository: req.body.repository.slice(0, 100),
-                  applicationUrl: req.body.url.slice(0, 100),
-                  applicationThumbnail: file.url,
-                  userId: req.user.userId
-                }).then((application) => {
-                  return res.redirect(`/applications/${application.applicationId}`);
+              const thumbnail = application.applicationThumbnail.split('/').pop();
+              s3Client.deleteObject(thumbnail).then(() => {
+                s3Client.putObject(req.file.buffer).then((file) => {
+                  application.update({
+                    applicationId: application.applicationId,
+                    applicationName: req.body.name.slice(0, 100),
+                    applicationDescription: req.body.description.slice(0, 1000),
+                    applicationRepository: req.body.repository.slice(0, 100),
+                    applicationUrl: req.body.url.slice(0, 100),
+                    applicationThumbnail: file.url,
+                    userId: req.user.userId
+                  }).then((application) => {
+                    return res.redirect(`/applications/${application.applicationId}`);
+                  }).catch(next);
                 }).catch(next);
               }).catch(next);
             } else {
