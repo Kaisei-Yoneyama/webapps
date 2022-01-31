@@ -14,6 +14,9 @@ const SESSION_SECRET = process.env.SESSION_SECRET;
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
+const REGION = process.env.AWS_REGION;
+const BUCKET = process.env.AWS_BUCKET_NAME;
+
 // モデル
 const User = require('./models/user');
 const Application = require('./models/application');
@@ -79,7 +82,17 @@ const applicationRouter = require('./routes/applications');
 const commentRouter = require('./routes/comments');
 
 const app = express();
-// app.use(helmet());
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: [`'self'`],
+      imgSrc: [`'self'`, `cdn.jsdelivr.net`, `${BUCKET}.s3.${REGION}.amazonaws.com`],
+      styleSrc: [`'self'`, 'cdn.jsdelivr.net'],
+      scriptSrc: [`'self'`, `cdn.jsdelivr.net`],
+    }
+  })
+);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
