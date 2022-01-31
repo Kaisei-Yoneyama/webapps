@@ -2,3 +2,8 @@ img.card-img-top.index-page {
   aspect-ratio: 16/9;
   object-fit: cover;
 }
+
+.card-text {
+  white-space: pre !important;
+  overflow: auto !important;
+}
