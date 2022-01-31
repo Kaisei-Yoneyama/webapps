@@ -3,8 +3,8 @@ extends layout
 block content
   div.bg-light.p-3.p-sm-5.mb-4.border-top
     div.container
-      h1.display-4 編集
-      p.lead Web アプリの紹介を編集します。
+      h1.display-4 編集・削除
+      p.lead アプリの紹介ページを編集・削除します。
       if error
         hr.my-4
         p.text-danger #{error.message}
@@ -28,5 +28,7 @@ block content
         textarea#description.form-control(name="description" rows="5" maxlength="1000" placeholder="1000 字以内で入力してください" required) #{application.applicationDescription}
       button.btn.btn-primary.mr(type="submit") 公開
 
+    h2.mt-4 ページを削除する
+    p 削除したページはもとに戻せません。
     form.mt-2(method="post" action=`/applications/${application.applicationId}?delete=1`)
       button.btn.btn-danger(type="submit") 削除
