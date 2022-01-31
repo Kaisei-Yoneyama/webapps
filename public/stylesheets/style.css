@@ -4,5 +4,5 @@ img.card-img-top.index-page {
 }
 
 .card-text {
-  white-space: pre !important;
+  white-space: pre-wrap !important;
 }
