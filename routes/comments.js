@@ -4,11 +4,14 @@ const express = require('express');
 const router = express.Router();
 const ensureAuthenticated = require('./ensure');
 const Comment = require('../models/comment');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
 
 // 投稿
 router.post(
   '/:applicationId/comments',
   ensureAuthenticated,
+  csrfProtection,
   (req, res, next) => {
     if (req.body.comment) {
       Comment.create({
@@ -28,6 +31,7 @@ router.post(
 router.post(
   '/:applicationId/comments/:commentId',
   ensureAuthenticated,
+  csrfProtection,
   (req, res, next) => {
     if (parseInt(req.query.delete) === 1) {
       Comment.findByPk(req.params.commentId).then((comment) => {

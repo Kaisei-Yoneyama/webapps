@@ -11,19 +11,26 @@
 
 const express = require('express');
 const router = express.Router();
-const uuid = require('uuid');
+
 const ensureAuthenticated = require('./ensure');
-const s3Client = require('../aws/s3Client');
+
 const User = require('../models/user');
 const Application = require('../models/application');
 const Comment = require('../models/comment');
-const csrf = require('csurf');
-const csrfProtection = csrf({ cookie: true });
+
+const uuid = require('uuid');
+const s3Client = require('../aws/s3Client');
+
 const dayjs = require('dayjs');
 const utc = require('dayjs/plugin/utc');
 const timezone = require('dayjs/plugin/timezone');
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
+
+
 const multer = require('multer');
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -34,19 +41,20 @@ const upload = multer({
 }).single('thumbnail');
 
 // 投稿ページを表示する
-router.get('/new', ensureAuthenticated, (req, res, next) => {
-  res.render('new', { user: req.user });
+router.get('/new', ensureAuthenticated, csrfProtection, (req, res, next) => {
+  res.render('new', {user: req.user, csrfToken: req.csrfToken()});
 });
 
 // 投稿を保存する
 router.post('/',
   ensureAuthenticated,
+  csrfProtection,
   (req, res, next) => {
     upload(req, res, (err) => {
       if (err instanceof multer.MulterError) {
-        return res.render('new', {user: req.user, data: req.body, error: err});
+        return res.render('new', {user: req.user, data: req.body, error: err, csrfToken: req.csrfToken()});
       } else if (err) {
-        return res.render('new', {user: req.user, data: req.body, error: err});
+        return res.render('new', {user: req.user, data: req.body, error: err, csrfToken: req.csrfToken()});
       } 
 
       if (req.body.name && req.body.description && req.body.repository && req.body.url && req.file) {
@@ -73,6 +81,7 @@ router.post('/',
 // 表示
 router.get(
   '/:applicationId',
+  csrfProtection,
   (req, res, next) => {
     Application.findOne({
       include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
@@ -93,6 +102,7 @@ router.get(
           comment.formattedUpdatedAt = dayjs(comment.updatedAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
         });
         return res.render('application', {
+          csrfToken: req.csrfToken(),
           application: application,
           comments: comments,
           user: req.user
@@ -105,13 +115,14 @@ router.get(
 router.get(
   '/:applicationId/edit',
   ensureAuthenticated,
+  csrfProtection,
   (req, res, next) => {
     Application.findOne({
       include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
       where: { applicationId: req.params.applicationId }
     }).then((application) => {
       if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
-        return res.render('edit', { application, user: req.user });
+        return res.render('edit', { application, user: req.user, csrfToken: req.csrfToken() });
       } else {
         const error = new Error('指定されたアプリがない、または編集する権限がありません');
         error.status = 404;
@@ -124,6 +135,7 @@ router.get(
 router.post(
   '/:applicationId',
   ensureAuthenticated,
+  csrfProtection,
   (req, res, next) => {
     Application.findOne({
       where: {applicationId: req.params.applicationId}
@@ -132,9 +144,9 @@ router.post(
         if (parseInt(req.query.edit) === 1) {
           upload(req, res, (err) => {
             if (err instanceof multer.MulterError) {
-              return res.render('edit', { user: req.user, application, data: req.body, error: err });
+              return res.render('edit', { user: req.user, application, data: req.body, error: err, csrfToken: req.csrfToken() });
             } else if (err) {
-              return res.render('edit', { user: req.user, application, data: req.body, error: err });
+              return res.render('edit', { user: req.user, application, data: req.body, error: err, csrfToken: req.csrfToken() });
             } 
 
             if (req.body.name && req.body.description && req.body.repository && req.body.url && req.file) {
@@ -156,7 +168,7 @@ router.post(
               }).catch(next);
             } else {
               const error = new Error('入力必須項目に入力されていません');
-              return res.render('edit', { user: req.user, error });
+              return res.render('edit', { user: req.user, error, csrfToken: req.csrfToken() });
             }
           });
         } else if (parseInt(req.query.delete) === 1) {
