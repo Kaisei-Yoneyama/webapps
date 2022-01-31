@@ -42,4 +42,4 @@ block content
               if user && user.userId == comment.userId
                 form(method="post" action=`/applications/${application.applicationId}/comments/${comment.commentId}?delete=1`)
                   button.btn.btn-danger(type="submit") 削除
-            div.card-footer.text-muted.d-inline #{comment.createdAt}
+            div.card-footer.text-muted.d-inline #{comment.formattedCreatedAt}

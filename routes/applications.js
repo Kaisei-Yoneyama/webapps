@@ -19,6 +19,11 @@ const Application = require('../models/application');
 const Comment = require('../models/comment');
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
 const multer = require('multer');
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -83,6 +88,10 @@ router.get(
         where: { applicationId: application.applicationId },
         order: [['commentId', 'DESC']]
       }).then((comments) => {
+        comments.forEach((comment) => {
+          comment.formattedCreatedAt = dayjs(comment.createdAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
+          comment.formattedUpdatedAt = dayjs(comment.updatedAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
+        });
         return res.render('application', {
           application: application,
           comments: comments,
