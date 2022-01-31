@@ -9,6 +9,11 @@ const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
 
+const HEROKU_URL = process.env.HEROKU_URL;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
+
 // モデル
 const User = require('./models/user');
 const Application = require('./models/application');
@@ -47,9 +52,9 @@ passport.deserializeUser((id, done) => {
 });
 
 passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: 'http://localhost:8000/auth/github/callback'
+    clientID: GITHUB_CLIENT_ID,
+    clientSecret: GITHUB_CLIENT_SECRET,
+    callbackURL: HEROKU_URL ? `${HEROKU_URL}auth/github/callback` : 'http://localhost:8000/auth/github/callback'
   },
   (accessToken, refreshToken, profile, done) => {
     process.nextTick(() => {
@@ -86,7 +91,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }));
+app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
