@@ -20,7 +20,7 @@ html
                 a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false") #{user.userName}
                 ul.dropdown-menu(aria-labelledby="navbarDropdownMenuLink")
                   li
-                    a.dropdown-item(href="/applications/new") 新規作成
+                    a.dropdown-item(href=`/users/${user.userName}`) マイページ
                   li
                     a.dropdown-item(href="/logout") ログアウト
             else

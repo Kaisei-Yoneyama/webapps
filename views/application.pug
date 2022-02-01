@@ -10,7 +10,7 @@ block content
       ul.list-group.list-group-flush
         li.list-group-item 
           i.bi.bi-person-square 
-          a.card-link.text-reset.text-decoration-none(href=`https://github.com/${application.user.userName}`) #{application.user.displayName || application.user.userName}
+          a.card-link.text-reset.text-decoration-none(href=`/users/${application.user.userName}`) #{application.user.displayName || application.user.userName}
         li.list-group-item 
           i.bi.bi-code-square 
           a.card-link.text-reset.text-decoration-none(href=application.applicationRepository) #{application.applicationRepository}
