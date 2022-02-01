@@ -12,7 +12,7 @@ block content
   div.container.mt-2
     if applications.length
       h1 作品一覧
-      p ランダムな順番で表示されています。
+      p 現在 #{applications.length} つのアプリが登録されています。
         div.row.row-cols-1.row-cols-lg-2.g-4
           each application in applications
             div.col
