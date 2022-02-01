@@ -30,7 +30,8 @@ router.get(
           });
           return res.render('user', {
             applications: applications,
-            user: user
+            developer: user,
+            user: req.user
           });
         }).catch(next);
       } else {
