@@ -11,16 +11,16 @@ block content
   div.container.mt-2
     if applications.length
       h1 作品一覧
+      p 現在 #{applications.length} つのアプリが登録されています
         div.row.row-cols-1.row-cols-lg-2.g-4
           each application in applications
             div.col
               div.card.h-100
-                img.card-img-top.index-page(src=application.applicationThumbnail alt="サムネイル")
+                img.card-img-top(src=application.applicationThumbnail alt="サムネイル")
                 div.card-body
                   h5.card-title #{application.applicationName}
                   p.card-text #{application.applicationDescription}
                   a.btn.btn-primary(href=`/applications/${application.applicationId}`) 詳細表示
-                div.card-footer
-                  small.text-muted #{application.formattedCpdatedAt}
+                div.card-footer #{application.formattedCreatedAt}
     else
       h1 まだ作品はありません

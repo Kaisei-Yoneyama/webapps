@@ -1,4 +1,4 @@
-img.card-img-top.index-page {
+.col > .card.h-100 > .card-img-top.index-page {
   aspect-ratio: 16/9;
   object-fit: cover;
 }
