@@ -27,7 +27,7 @@ block content
           input(type="hidden" name="_csrf" value!=csrfToken)
           div.mb-3
             label.form-label(for="comment") コメント
-            textarea#comment.form-control(type="text" name="comment" rows="5" maxlength="1000" aria-describedby="comment-help" required)
+            textarea#comment.form-control(type="text" name="comment" rows="5" maxlength="200" aria-describedby="comment-help" required)
             div#comment-help.form-text 200 字以内で入力してください。
           button.btn.btn-primary.mr(type="submit") 投稿
 
