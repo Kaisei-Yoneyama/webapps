@@ -5,9 +5,12 @@ block content
     div.container
       h1.display-4 作成
       p.lead Web アプリの紹介を作成します。
-      if error
+      if errors
         hr.my-4
-        p.text-danger #{error.message}
+        //- p.text-danger
+        ul
+          each error in errors
+            li #{error.param}: #{error.msg}
   div.container.mt-2
     form(method="post" action=`/applications?_csrf=${csrfToken}` enctype="multipart/form-data")
       //- multipart/form-data では使えないらしい？クエリで送信して解決した
