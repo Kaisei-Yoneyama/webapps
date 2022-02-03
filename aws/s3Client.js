@@ -25,20 +25,20 @@ const s3Client = new S3Client({
 
 /**
  * ファイルを Amazon S3 に保存する
- * @param {Buffer | Uint8Array | ArrayBuffer} fileData 保存するファイルのデータ
+ * @param {Buffer | Uint8Array | ArrayBuffer} data 保存するファイルのデータ
  * @return {Promise<{type: string, name: string, url: string}>} 保存したファイルの情報を含む Promise
  */
-async function putObject(fileData) {
+async function putObject(data) {
   // Buffer からファイルタイプを取得する
-  const fileTypeResult = await FileType.fromBuffer(fileData);
+  const fileTypeResult = await FileType.fromBuffer(data);
   const fileName = `${uuid.v4()}.${fileTypeResult.ext}`;
   const mimeType = fileTypeResult.mime;
 
   const command = new PutObjectCommand({
+    ContentType: mimeType,
     Bucket: BUCKET,
     Key: fileName,
-    Body: fileData,
-    ContentType: mimeType
+    Body: data
   });
 
   // S3 に送信する
