@@ -34,13 +34,16 @@ async function putObject(fileData) {
   const fileName = `${uuid.v4()}.${fileTypeResult.ext}`;
   const mimeType = fileTypeResult.mime;
 
-  // S3 に送信する
-  await s3Client.send(new PutObjectCommand({
+  const command = new PutObjectCommand({
     Bucket: BUCKET,
-    ContentType: mimeType,
     Key: fileName,
-    Body: fileData
-  }));
+    Body: fileData,
+    ContentType: mimeType
+  });
+
+  // S3 に送信する
+  const response = await s3Client.send(command);
+  const httpStatusCode = response.$metadata.httpStatusCode;
 
   // ファイルの情報を返す
   return {
@@ -56,10 +59,15 @@ async function putObject(fileData) {
  * @return {Promise} Promise
  */
 async function deleteObject(fileName) {
-  return await s3Client.send(new DeleteObjectCommand({
+  const command = new DeleteObjectCommand({
     Bucket: BUCKET,
     Key: fileName
-  }));
+  });
+
+  const response = await s3Client.send(command);
+  const httpStatusCode = response.$metadata.httpStatusCode;
+
+  return response;
 }
 
 /**
