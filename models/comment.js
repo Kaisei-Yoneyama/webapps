@@ -23,7 +23,7 @@ const Comment = sequelize.define('comments', {
   }
 }, {
   timestamps: true,
-  indexes: [{fields: ['userId', 'applicationId']}]
+  indexes: [ { fields: [ 'userId', 'applicationId' ] } ]
 });
 
 module.exports = Comment;

@@ -10,23 +10,23 @@ const Application = sequelize.define('applications', {
   },
   applicationName: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   applicationThumbnail: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   applicationDescription: {
     type: DataTypes.TEXT,
-    allowNull: false
+    allowNull: true
   },
   applicationUrl: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   applicationRepository: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
   },
   userId: {
     type: DataTypes.INTEGER,
@@ -34,7 +34,7 @@ const Application = sequelize.define('applications', {
   }
 }, {
   timestamps: true,
-  indexes: [{fields: [ 'userId' ]}]
+  indexes: [ { fields: [ 'userId' ] } ]
 });
 
 module.exports = Application;

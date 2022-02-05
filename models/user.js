@@ -14,10 +14,15 @@ const User = sequelize.define('users', {
   },
   displayName: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: true
+  },
+  biography: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
-  timestamps: false
+  timestamps: false,
+  indexes: [ { fields: [ 'userName' ] } ]
 });
 
 module.exports = User;

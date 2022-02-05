@@ -3,13 +3,13 @@
 const { sequelize, DataTypes } = require('./sequelize-loader');
 
 const Like = sequelize.define('likes', {
-  userId: {
-    type: DataTypes.INTEGER,
+  applicationId: {
+    type: DataTypes.UUID,
     primaryKey: true,
     allowNull: false
   },
-  applicationId: {
-    type: DataTypes.UUID,
+  userId: {
+    type: DataTypes.INTEGER,
     primaryKey: true,
     allowNull: false
   }
