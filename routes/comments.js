@@ -16,42 +16,45 @@ router.post(
   param('applicationId').notEmpty().isUUID(),
   body('comment').notEmpty().isLength({ max: 200 }),
   (req, res, next) => {
+    // バリデーションエラー
     const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      Comment.create({
-        userId: req.user.userId,
-        applicationId: req.params.applicationId,
-        comment: req.body.comment
-      }).then((comment) => {
-        res.redirect(`/applications/${comment.applicationId}`);
-      }).catch(next);
-    } else {
+    if (!errors.isEmpty()) {
       res.redirect(`/applications/${req.params.applicationId}`);
     }
+
+    // 保存する
+    Comment.create({
+      userId: req.user.userId,
+      applicationId: req.params.applicationId,
+      comment: req.body.comment
+    }).then((comment) => {
+      res.redirect(`/applications/${comment.applicationId}`);
+    }).catch(next);
   }
 );
 
 // 削除
 router.post(
-  '/:applicationId/comments/:commentId',
+  '/:applicationId/comments/:commentId/delete',
   ensureAuthenticated,
   csrfProtection,
-  query('delete').notEmpty().isWhitelisted('1'),
   param('applicationId').notEmpty().isUUID(),
   param('commentId').notEmpty().isNumeric(),
   (req, res, next) => {
+    // バリデーションエラー
     const errors = validationResult(req);
     if (errors.isEmpty()) {
-      Comment.findByPk(req.params.commentId).then((comment) => {
-        if (comment && comment.userId === req.user.userId) {
-          comment.destroy().then(() => {
-            res.redirect(`/applications/${req.params.applicationId}`);
-          }).catch(next);
-        }
-      });
-    } else {
       res.redirect(`/applications/${req.params.applicationId}`);
     }
+
+    // コメントが存在して、投稿者がリクエストしてきたユーザーなら削除する
+    Comment.findByPk(req.params.commentId).then((comment) => {
+      if (comment && comment.userId === req.user.userId) {
+        comment.destroy().then(() => {
+          res.redirect(`/applications/${req.params.applicationId}`);
+        }).catch(next);
+      }
+    });
   }
 );
 
