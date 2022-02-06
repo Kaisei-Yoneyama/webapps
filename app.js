@@ -84,6 +84,8 @@ const commentRouter = require('./routes/comments');
 
 const app = express();
 
+// サムネイルを Amazon S3 に保存していたり
+// Bootstrap の CDN を使用しているため個別に指定する
 app.use(helmet.contentSecurityPolicy({
   directives: {
     defaultSrc: [`'self'`],

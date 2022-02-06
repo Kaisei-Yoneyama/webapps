@@ -15,14 +15,18 @@ const User = require('../models/user');
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {
+  // 登録されているすべてのアプリを取得する
   const applications = await Application.findAll({
     include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
-    order: sequelize.random()
+    order: sequelize.random() // ランダムに並べ替える
   });
+
+  // 投稿日時のフォーマット
   applications.forEach((application) => {
     application.formattedCreatedAt = dayjs(application.createdAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
     application.formattedUpdatedAt = dayjs(application.updatedAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
   });
+
   res.render('index', {
     user: req.user,
     applications
