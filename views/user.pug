@@ -3,11 +3,12 @@ extends layout
 block content
   div.bg-light.p-3.p-sm-5.mb-4.border-top
     div.container
-      h1.display-4 #{developer.displayName}
+      h1.display-4 #{developer.displayName || developer.userName}
       p.lead #{developer.userName}
-      //- hr.my-4
-      //- p #{developer.biography}
-      //- a.btn.btn-primary.btn-lg(href=`https://github.com/${developer.userName}` role="button") GitHub
+      hr.my-4
+      if developer.biography
+        p #{developer.biography}
+      a.btn.btn-primary.btn-lg(href=`https://github.com/${developer.userName}` role="button") GitHub
   div.container.mt-2
     if applications.length
       h1 作品一覧
