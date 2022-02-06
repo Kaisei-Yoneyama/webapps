@@ -43,7 +43,7 @@ router.post(
   (req, res, next) => {
     // バリデーションエラー
     const errors = validationResult(req);
-    if (errors.isEmpty()) {
+    if (!errors.isEmpty()) {
       res.redirect(`/applications/${req.params.applicationId}`);
     }
 
