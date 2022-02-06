@@ -7,6 +7,7 @@ const Comment = require('../models/comment');
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
 const { body, param, query, validationResult } = require('express-validator');
+const createError = require('http-errors');
 
 // 投稿
 router.post(
@@ -53,6 +54,8 @@ router.post(
         comment.destroy().then(() => {
           res.redirect(`/applications/${req.params.applicationId}`);
         }).catch(next);
+      } else {
+        next(createError(404));
       }
     });
   }
