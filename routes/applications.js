@@ -3,7 +3,9 @@
 const express = require('express');
 const router = express.Router();
 
+const createError = require('http-errors');
 const ensureAuthenticated = require('./ensure');
+const { body, param, query, validationResult } = require('express-validator');
 
 const User = require('../models/user');
 const Application = require('../models/application');
@@ -26,19 +28,25 @@ const marked = require('marked');
 const multer = require('multer');
 
 const upload = multer({
+  // ファイルを一時的にメモリに保存する
   storage: multer.memoryStorage(),
+  // 1MB 以下のファイルを受け入れる
   limits: { fileSize: 1024 ** 2 },
+  // 画像のファイルのみ受け入れる
   fileFilter: (req, file, cb) => {
-    return /image/.test(file.mimetype) ? cb(null, true) : cb(new Error('Unsupported file type'));
+    if (/image/.test(file.mimetype)) {
+      cb(null, true); // 受け入れる
+    } else {
+      const error = new Error('Unsupported file type');
+      cb(error); // 受け入れない
+    }
   }
 }).single('thumbnail');
 
 function uploader(req, res, next) {
   upload(req, res, (err) => {
-    if (err instanceof multer.MulterError) {
-      res.locals.multerError = err;
-      return next();
-    } else if (err) {
+    if (err instanceof Error) {
+      // express-validator で使用するために req.locals に格納する
       res.locals.error = err;
       return next();
     } else {
@@ -50,50 +58,60 @@ function uploader(req, res, next) {
 }
 
 function validator(value, { req, location, path }) {
-  if (req.res.locals.multerError instanceof multer.MulterError) {
-    throw req.res.locals.multerError;
-  } else if (req.res.locals.error instanceof Error) {
+  if (req.res.locals.error instanceof multer.MulterError) {
     throw req.res.locals.error;
-  } else if (value === undefined) {
-    throw new Error('File does not exist');
   } else {
     return true;
   }
 }
 
-const { body, param, query, validationResult } = require('express-validator');
-const createError = require('http-errors');
+const validators = [
+  body('file') // アプリのサムネイル
+    .exists().withMessage('必須項目です')
+    .custom(validator).withMessage('許可されたファイルではありません'),
+  body('name') // アプリの名前
+    .notEmpty().withMessage('必須項目です')
+    .isLength({ max: 100 }).withMessage('100 字以内で入力してください'),
+  body('description') // アプリの説明
+    .notEmpty().withMessage('必須項目です')
+    .isLength({ max: 1000 }).withMessage('1000 字以内で入力してください'),
+  body('repository') // アプリのリポジトリ
+    .notEmpty().withMessage('必須項目です')
+    .isURL().withMessage('正しい URL を入力してください')
+    .isLength({ max: 100 }).withMessage('100 字以内で入力してください'),
+  body('url') // アプリの URL
+    .notEmpty().withMessage('必須項目です')
+    .isURL().withMessage('正しい URL を入力してください')
+    .isLength({ max: 100 }).withMessage('100 字以内で入力してください'),
+];
 
 // 投稿ページを表示する
 router.get('/new', ensureAuthenticated, csrfProtection, (req, res, next) => {
   res.render('new', { user: req.user, csrfToken: req.csrfToken() });
 });
 
-// 投稿を保存する
+// 投稿内容を保存する
 router.post('/',
   ensureAuthenticated,
   csrfProtection,
   uploader,
-  body('file')
-    .custom(validator),
-  body('name')
-    .notEmpty().withMessage('必須入力項目です')
-    .isLength({ max: 100 }).withMessage('100 字以内で入力してください'),
-  body('description')
-    .notEmpty().withMessage('必須入力項目です')
-    .isLength({ max: 1000 }).withMessage('1000 字以内で入力してください'),
-  body('repository')
-    .notEmpty().withMessage('必須入力項目です')
-    .isURL().withMessage('正しい URL を入力してください')
-    .isLength({ max: 100 }).withMessage('100 字以内で入力してください'),
-  body('url')
-    .notEmpty().withMessage('必須入力項目です')
-    .isURL().withMessage('正しい URL を入力してください')
-    .isLength({ max: 100 }).withMessage('100 字以内で入力してください'),
+  validators,
   (req, res, next) => {
+    // バリデーションエラー
     const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      s3Client.putObject(req.file.buffer).then((file) => {
+    if (!errors.isEmpty()) {
+      // 作成ページを再表示する
+      return res.render('new', {
+        user: req.user,
+        formData: req.body,
+        errors: errors.errors,
+        csrfToken: req.csrfToken()
+      });
+    }
+
+    // S3 とデータベースに保存する
+    s3Client.putObject(req.file.buffer)
+      .then((file) => {
         Application.create({
           applicationId: uuid.v4(),
           applicationName: req.body.name,
@@ -103,133 +121,179 @@ router.post('/',
           applicationThumbnail: file.url,
           userId: req.user.userId
         }).then((application) => {
+          // 保存できたら紹介ページにリダイレクトする
           return res.redirect(`/applications/${application.applicationId}`);
         }).catch(next);
       }).catch(next);
-    } else {
-      return res.render('new', {
-        user: req.user,
-        errors: errors.errors,
-        csrfToken: req.csrfToken()
-      });
-    }
   });
 
-// 表示
+// 紹介ページを表示する
 router.get(
   '/:applicationId',
   csrfProtection,
   param('applicationId').notEmpty().isUUID(),
   (req, res, next) => {
+    // バリデーションエラー
     const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      Application.findOne({
-        include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
-        where: { applicationId: req.params.applicationId }
-      }).then((application) => {
-        if (application === null) {
-          return next(createError(404));
-        }
-        Comment.findAll({
-          include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
-          where: { applicationId: application.applicationId },
-          order: [['commentId', 'DESC']]
-        }).then((comments) => {
-          comments.forEach((comment) => {
-            comment.formattedCreatedAt = dayjs(comment.createdAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
-            comment.formattedUpdatedAt = dayjs(comment.updatedAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
-          });
-          return res.render('application', {
-            csrfToken: req.csrfToken(),
-            application: application,
-            comments: comments,
-            user: req.user
-          });
-        }).catch(next);
-      }).catch(next);
-    } else {
-      res.redirect('/');
+    if (!errors.isEmpty()) {
+      return next(createError(404));
     }
+
+    // アプリを取得する
+    Application.findOne({
+      include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
+      where: { applicationId: req.params.applicationId }
+    }).then((application) => {
+      // アプリが存在しない
+      if (application === null) {
+        return next(createError(404));
+      }
+
+      // コメントを取得する
+      Comment.findAll({
+        include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
+        where: { applicationId: application.applicationId },
+        order: [['commentId', 'DESC']]
+      }).then((comments) => {
+        // 投稿・更新日時のフォーマット
+        comments.forEach((comment) => {
+          comment.formattedCreatedAt = dayjs(comment.createdAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
+          comment.formattedUpdatedAt = dayjs(comment.updatedAt).tz('Asia/Tokyo').format('YYYY年MM月DD日 HH時mm分ss秒');
+        });
+
+        // 作品紹介ページを表示する
+        return res.render('application', {
+          csrfToken: req.csrfToken(),
+          application: application,
+          comments: comments,
+          user: req.user
+        });
+      }).catch(next);
+    }).catch(next);
   });
 
-// 編集
+// 編集ページを表示する
 router.get(
   '/:applicationId/edit',
   ensureAuthenticated,
   csrfProtection,
-  param('applicationId').notEmpty().isUUID(),
+  param('applicationId')
+    .notEmpty().isUUID(),
   (req, res, next) => {
+    // バリデーションエラー
     const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      Application.findOne({
-        include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
-        where: { applicationId: req.params.applicationId }
-      }).then((application) => {
-        if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
-          return res.render('edit', { application, user: req.user, csrfToken: req.csrfToken() });
-        } else {
-          return next(createError(404));
-        }
-      }).catch(next);
-    } else {
+    if (!errors.isEmpty()) {
       next(createError(404));
     }
+
+    // 編集対象のアプリを取得する
+    Application.findOne({
+      include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
+      where: { applicationId: req.params.applicationId }
+    }).then((application) => {
+      // アプリが存在して、作成者がリクエストしてきたユーザーなら編集ページを表示する
+      if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
+        return res.render('edit', { application, user: req.user, csrfToken: req.csrfToken() });
+      } else {
+        return next(createError(404));
+      }
+    }).catch(next);
   });
 
-// 更新・削除
+// 編集内容を保存する
 router.post(
-  '/:applicationId',
+  '/:applicationId/edit',
   ensureAuthenticated,
   csrfProtection,
+  uploader,
+  validators,
+  param('applicationId')
+    .notEmpty().isUUID(),
   (req, res, next) => {
+    // 編集対象のアプリを取得する
     Application.findOne({
-      where: {applicationId: req.params.applicationId}
+      where: { applicationId: req.params.applicationId }
     }).then((application) => {
+      // アプリが存在して、作成者がリクエストしてきたユーザーなら編集内容を保存する
       if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
-        if (parseInt(req.query.edit) === 1) {
-          upload(req, res, (err) => {
-            if (err instanceof multer.MulterError) {
-              return res.render('edit', { user: req.user, application, data: req.body, error: err, csrfToken: req.csrfToken() });
-            } else if (err) {
-              return res.render('edit', { user: req.user, application, data: req.body, error: err, csrfToken: req.csrfToken() });
-            } 
+        // バリデーションエラー
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          // 編集ページを再表示する
+          return res.render('edit', {
+            user: req.user,
+            formData: req.body,
+            errors: errors.errors,
+            csrfToken: req.csrfToken(),
+            application: application
+          });
+        }
 
-            if (req.body.name && req.body.description && req.body.repository && req.body.url && req.file) {
-              const thumbnail = application.applicationThumbnail.split('/').pop();
-              s3Client.deleteObject(thumbnail).then(() => {
-                s3Client.putObject(req.file.buffer).then((file) => {
-                  application.update({
-                    applicationId: application.applicationId,
-                    applicationName: req.body.name.slice(0, 100),
-                    applicationDescription: req.body.description.slice(0, 1000),
-                    applicationRepository: req.body.repository.slice(0, 100),
-                    applicationUrl: req.body.url.slice(0, 100),
-                    applicationThumbnail: file.url,
-                    userId: req.user.userId
-                  }).then((application) => {
-                    return res.redirect(`/applications/${application.applicationId}`);
-                  }).catch(next);
+        // S3 オブジェクトのキーを取得する
+        const thumbnail = application.applicationThumbnail;
+        const key = thumbnail.split('/').pop();
+
+        // 既存のサムネイルを削除してから更新する
+        s3Client.deleteObject(key)
+          .then(() => {
+            s3Client.putObject(req.file.buffer)
+              .then((file) => {
+                application.update({
+                  applicationId: application.applicationId,
+                  applicationName: req.body.name,
+                  applicationDescription: req.body.description,
+                  applicationRepository: req.body.repository,
+                  applicationUrl: req.body.url,
+                  applicationThumbnail: file.url,
+                  userId: req.user.userId
+                }).then((application) => {
+                  // 更新できたら紹介ページにリダイレクトする
+                  return res.redirect(`/applications/${application.applicationId}`);
                 }).catch(next);
               }).catch(next);
-            } else {
-              const error = new Error('入力必須項目に入力されていません');
-              return res.render('edit', { user: req.user, error, csrfToken: req.csrfToken() });
-            }
-          });
-        } else if (parseInt(req.query.delete) === 1) {
-          const thumbnail = application.applicationThumbnail.split('/').pop();
-          s3Client.deleteObject(thumbnail).then(() => {
-            Comment.destroy({where: { applicationId: application.applicationId}}).then(() => {
-              application.destroy().then(() => {
-                return res.redirect('/');
-              }).catch(next);
+          }).catch(next);
+      } else {
+        return next(createError(404));
+      }
+    }).catch(next);
+  });
+
+// 紹介を削除する
+router.post(
+  '/:applicationId/delete',
+  ensureAuthenticated,
+  csrfProtection,
+  param('applicationId')
+    .notEmpty().isUUID(),
+  (req, res, next) => {
+    // バリデーションエラー
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      next(404);
+    }
+
+    // 削除対象のアプリを取得する
+    Application.findOne({
+      where: { applicationId: req.params.applicationId }
+    }).then((application) => {
+      // アプリが存在して、作成者がリクエストしてきたユーザーなら削除する
+      if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
+
+        // S3 オブジェクトのキーを取得する
+        const thumbnail = application.applicationThumbnail;
+        const key = thumbnail.split('/').pop();
+
+        // S3 とデータベースから削除する
+        s3Client.deleteObject(key).then(() => {
+          Comment.destroy({ where: { applicationId: application.applicationId } }).then(() => {
+            application.destroy().then(() => {
+              // 削除でたらマイページにリダイレクトする
+              return res.redirect(`/users/${req.user.userName}`);
             }).catch(next);
           }).catch(next);
-        }
+        }).catch(next);
       } else {
-        const error = new Error('指定されたアプリがない、または編集する権限がありません');
-        error.status = 404;
-        return next(error);
+        return next(createError(404));
       }
     }).catch(next);
   });
