@@ -12,9 +12,8 @@ block content
           each error in errors
             li #{error.param}: #{error.msg}
   div.container.mt-2
+    //- multipart/form-data では _csrf をクエリ文字列として送信する
     form(method="post" action=`/applications?_csrf=${csrfToken}` enctype="multipart/form-data")
-      //- multipart/form-data では使えないらしい？クエリで送信して解決した
-      //- input(type="hidden" name="_csrf" value!=csrfToken)
       div.mb-3
         label.form-label(for="thumbnail") アプリのサムネイル
         input#thumbnail.form-control(type="file" name="thumbnail" accept="image/*" aria-describedby="thumbnail-help" required)
