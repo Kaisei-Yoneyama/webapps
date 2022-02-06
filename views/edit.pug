@@ -12,9 +12,8 @@ block content
           each error in errors
             li #{error.param}: #{error.msg}
   div.container.my-2
-    form(method="post" action=`/applications/${application.applicationId}?edit=1&_csrf=${csrfToken}` enctype="multipart/form-data")
-      //- multipart/form-data では使えないらしい？クエリで送信して解決した
-      //- input(type="hidden" name="_csrf" value!=csrfToken)
+    //- multipart/form-data では _csrf をクエリ文字列として送信する
+    form(method="post" action=`/applications/${application.applicationId}/edit?_csrf=${csrfToken}` enctype="multipart/form-data")
       div.mb-3
         label.form-label(for="thumbnail") アプリのサムネイル
         input#thumbnail.form-control(type="file" name="thumbnail" accept="image/*" aria-describedby="thumbnail-help" required)
@@ -35,6 +34,6 @@ block content
 
     h2.mt-4 ページを削除する
     p 削除したページはもとに戻せません。
-    form.mt-2(method="post" action=`/applications/${application.applicationId}?delete=1`)
+    form.mt-2(method="post" action=`/applications/${application.applicationId}/delete`)
       input(type="hidden" name="_csrf" value!=csrfToken)
       button.btn.btn-danger(type="submit") 削除
