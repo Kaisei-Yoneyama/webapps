@@ -1,6 +1,6 @@
 {
-  "name": "webapps",
-  "description": "WEBAPPS",
+  "name": "WEBAPPS",
+  "description": "portfolio service",
   "logo": "",
   "keywords": ["node"],
   "image": "heroku/nodejs"
