@@ -21,6 +21,7 @@ block content
     form(method="post" action=`/applications/${application.applicationId}/edit?_csrf=${csrfToken}` enctype="multipart/form-data")
       div.mb-3
         label.form-label(for="thumbnail") アプリのサムネイル
+        img#preview.mb-2.d-block.border.rounded(src="/images/thumbnail.png" alt="プレビュー")
         input#thumbnail.form-control(type="file" name="thumbnail" accept="image/*" aria-describedby="thumbnail-help" required)
         div#thumbnail-help.form-text 推奨するアスペクト比は 16:9 です。1MB 以下の画像ファイルを添付してください。
       div.mb-3
@@ -46,3 +47,5 @@ block content
     form.mt-2(method="post" action=`/applications/${application.applicationId}/delete`)
       input(type="hidden" name="_csrf" value!=csrfToken)
       button.btn.btn-danger(type="submit") 削除
+
+  script(src="/javascripts/handle-files.js")
