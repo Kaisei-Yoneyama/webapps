@@ -19,6 +19,7 @@ function handleFiles() {
   // 選択したファイルは単一か
   if (this.files.length > 1) {
     alert('単一のファイルをアップロードしてください');
+    preview.src = '/images/thumbnail.png';
     this.value = null;
     return;
   }
@@ -26,6 +27,7 @@ function handleFiles() {
   // ファイルのサイズは 1MB 以下か
   if (this.files.item(0).size > (1 * 1024 * 1024)) {
     alert('1MB 以下のファイルをアップロードしてください');
+    preview.src = '/images/thumbnail.png';
     this.value = null;
     return;
   }
@@ -33,6 +35,7 @@ function handleFiles() {
   // ファイルのタイプは image/* か
   if (!/image/.test(this.files.item(0).type)) {
     alert('画像のファイルをアップロードしてください');
+    preview.src = '/images/thumbnail.png';
     this.value = null;
     return;
   }
