@@ -9,7 +9,7 @@ const timezone = require('dayjs/plugin/timezone');
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const {sequelize} = require('../models/sequelize-loader');
+const { sequelize } = require('../models/sequelize-loader');
 const Application = require('../models/application');
 const User = require('../models/user');
 
@@ -17,7 +17,7 @@ const User = require('../models/user');
 router.get('/', async (req, res, next) => {
   // 登録されているすべてのアプリを取得する
   const applications = await Application.findAll({
-    include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
+    include: [ { model: User, attributes: [ 'userId', 'userName', 'isAdmin' ] } ],
     order: sequelize.random() // ランダムに並べ替える
   });
 

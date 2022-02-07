@@ -17,7 +17,7 @@ block content
         li.list-group-item 
           i.bi.bi-arrow-up-right-square 
           a.card-link.text-reset.text-decoration-none(href=application.applicationUrl) #{application.applicationUrl}
-      if user && user.userId == application.user.userId
+      if user && (user.userId == application.user.userId || user.isAdmin)
         div.card-body
           a.card-link(href=`/applications/${application.applicationId}/edit`) 編集
 
@@ -36,11 +36,13 @@ block content
         each comment in comments
           div.card.mb-3
             div.card-header
-              i.bi.bi-github 
-              a.text-reset.text-decoration-none(href=`https://github.com/${comment.user.userName}`) #{comment.user.userName}
+              i.bi.bi-github(data-admin=comment.user.isAdmin) 
+              a.text-reset.text-decoration-none(href=`https://github.com/${comment.user.userName}`) #{comment.user.userName} 
+              if comment.user.isAdmin
+                span.badge.rounded-pill.bg-secondary Admin
             div.card-body
               p.card-text #{comment.comment}
-              if user && user.userId == comment.userId
+              if user && (user.userId == comment.userId || user.isAdmin)
                 form(method="post" action=`/applications/${application.applicationId}/comments/${comment.commentId}/delete`)
                   input(type="hidden" name="_csrf" value!=csrfToken)
                   button.btn.btn-danger(type="submit") 削除

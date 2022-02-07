@@ -65,7 +65,15 @@ passport.use(new GitHubStrategy({
         userId: profile.id,
         userName: profile.username,
         displayName: profile.displayName,
-        biography: profile._json.bio
+        biography: profile._json.bio,
+        isAdmin: false // デフォルト
+      }, {
+        fields: [
+          'userId',
+          'userName',
+          'displayName',
+          'biography'
+        ]
       }).then((user) => {
         done(null, user[0].dataValues);
       }).catch((error) => {

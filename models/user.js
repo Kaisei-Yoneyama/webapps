@@ -19,6 +19,10 @@ const User = sequelize.define('users', {
   biography: {
     type: DataTypes.STRING,
     allowNull: true
+  },
+  isAdmin: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false
   }
 }, {
   timestamps: false,

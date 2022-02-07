@@ -49,8 +49,9 @@ router.post(
     }
 
     // コメントが存在して、投稿者がリクエストしてきたユーザーなら削除する
+    // 管理者も削除できる
     Comment.findByPk(req.params.commentId).then((comment) => {
-      if (comment && comment.userId === req.user.userId) {
+      if (comment && comment.userId === req.user.userId || req.user.isAdmin) {
         comment.destroy().then(() => {
           res.redirect(`/applications/${req.params.applicationId}`);
         }).catch(next);

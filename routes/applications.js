@@ -141,7 +141,7 @@ router.get(
 
     // アプリを取得する
     Application.findOne({
-      include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
+      include: [{ model: User, attributes: ['userId', 'userName', 'displayName', 'isAdmin' ] }],
       where: { applicationId: req.params.applicationId }
     }).then((application) => {
       // アプリが存在しない
@@ -151,7 +151,7 @@ router.get(
 
       // コメントを取得する
       Comment.findAll({
-        include: [{ model: User, attributes: ['userId', 'userName', 'displayName'] }],
+        include: [{ model: User, attributes: [ 'userId', 'userName', 'isAdmin' ] }],
         where: { applicationId: application.applicationId },
         order: [['commentId', 'DESC']]
       }).then((comments) => {
@@ -192,7 +192,8 @@ router.get(
       where: { applicationId: req.params.applicationId }
     }).then((application) => {
       // アプリが存在して、作成者がリクエストしてきたユーザーなら編集ページを表示する
-      if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
+      // 管理者も編集・削除できる
+      if (application && parseInt(application.userId) === parseInt(req.user.userId) || req.user.isAdmin) {
         return res.render('edit', { application, user: req.user, csrfToken: req.csrfToken() });
       } else {
         return next(createError(404));
@@ -215,7 +216,8 @@ router.post(
       where: { applicationId: req.params.applicationId }
     }).then((application) => {
       // アプリが存在して、作成者がリクエストしてきたユーザーなら編集内容を保存する
-      if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
+      // 管理者も編集できる
+      if (application && parseInt(application.userId) === parseInt(req.user.userId) || req.user.isAdmin) {
         // バリデーションエラー
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -277,7 +279,8 @@ router.post(
       where: { applicationId: req.params.applicationId }
     }).then((application) => {
       // アプリが存在して、作成者がリクエストしてきたユーザーなら削除する
-      if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
+      // 管理者も削除できる
+      if (application && parseInt(application.userId) === parseInt(req.user.userId) || req.user.isAdmin) {
 
         // S3 オブジェクトのキーを取得する
         const thumbnail = application.applicationThumbnail;

@@ -21,7 +21,10 @@ html
               a.nav-link.active(aria-current="page" href="/") ホーム
             if user
               li.nav-item.dropdown
-                a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false") #{user.userName}
+                a#navbarDropdownMenuLink.nav-link.dropdown-toggle(href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false")
+                  | #{user.userName} 
+                  if user.isAdmin
+                    span.badge.rounded-pill.bg-secondary Admin
                 ul.dropdown-menu(aria-labelledby="navbarDropdownMenuLink")
                   li
                     a.dropdown-item(href=`/users/${user.userName}`) マイページ
