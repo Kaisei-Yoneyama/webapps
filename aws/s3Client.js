@@ -25,7 +25,7 @@ const s3Client = new S3Client({
 
 /**
  * @typedef {object} S3Object オブジェクト
- * @property {string} key オブジェクトのキー
+ * @property {string} key オブジェクトのキー名
  * @property {string} type オブジェクトの MIME タイプ
  * @property {string} url オブジェクト URL
  */
@@ -33,7 +33,7 @@ const s3Client = new S3Client({
 /**
  * ファイルを Amazon S3 に保存する
  * @param {Buffer | Uint8Array | ArrayBuffer} data 保存するファイルのデータ
- * @return {Promise<S3Object>} 保存したファイルの情報を表すオブジェクトで解決する Promise
+ * @return {Promise<S3Object>} 保存した S3 オブジェクトの情報を表すオブジェクトで解決する Promise
  */
 async function putObject(data) {
   // Buffer からファイルタイプを取得する
@@ -52,7 +52,7 @@ async function putObject(data) {
   const response = await s3Client.send(command);
   const httpStatusCode = response.$metadata.httpStatusCode;
 
-  // ファイルの情報を返す
+  // S3 オブジェクトの情報を返す
   return {
     key: fileName,
     type: mimeType,
@@ -61,14 +61,14 @@ async function putObject(data) {
 }
 
 /**
- * Amazon S3 からファイルを削除する
- * @param {string} fileName 削除するファイルの名前
+ * Amazon S3 からオブジェクトを削除する
+ * @param {string} key 削除するオブジェクトのキー名
  * @return {Promise} Promise
  */
-async function deleteObject(fileName) {
+async function deleteObject(key) {
   const command = new DeleteObjectCommand({
     Bucket: BUCKET,
-    Key: fileName
+    Key: key
   });
 
   const response = await s3Client.send(command);
