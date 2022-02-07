@@ -41,7 +41,7 @@ block content
               if comment.user.isAdmin
                 span.badge.rounded-pill.bg-secondary Admin
               if comment.user.userId == application.user.userId
-                span.badge.rounded-pill.bg-primary Developer
+                span.badge.rounded-pill.bg-primary.ms-1 Developer
             div.card-body
               p.card-text #{comment.comment}
               if user && (user.userId == comment.userId || user.isAdmin)
