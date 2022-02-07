@@ -3,7 +3,7 @@
 const preview = document.getElementById('preview');
 const uploader = document.getElementById('thumbnail');
 
-uploader.addEventListener('change', handleFiles);
+uploader?.addEventListener('change', handleFiles);
 
 /**
  * ユーザーが選択したファイルを検証して
