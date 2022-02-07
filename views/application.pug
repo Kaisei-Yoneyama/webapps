@@ -39,9 +39,9 @@ block content
               i.bi.bi-github(data-admin=comment.user.isAdmin) 
               a.text-reset.text-decoration-none(href=`https://github.com/${comment.user.userName}`) #{comment.user.userName} 
               if comment.user.isAdmin
-                span.badge.rounded-pill.bg-secondary Admin
+                span.badge.rounded-pill.bg-secondary 管理者
               if comment.user.userId == application.user.userId
-                span.badge.rounded-pill.bg-primary.ms-1 Developer
+                span.badge.rounded-pill.bg-primary.ms-1 投稿者
             div.card-body
               p.card-text #{comment.comment}
               if user && (user.userId == comment.userId || user.isAdmin)
