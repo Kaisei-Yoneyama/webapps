@@ -3,7 +3,7 @@
   object-fit: cover;
 }
 
-.card-text {
+.card-text, p {
   white-space: pre-wrap !important;
 }
 
