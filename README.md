@@ -1,6 +1,20 @@
 # WEBAPPS
 作成した Web アプリケーションを紹介できるポートフォリオサービスです。
 
+## 管理者機能
+![管理者](https://intense-eyrie-15263.herokuapp.com/images/readme/admin.png)
+管理者（ Admin バッジが付いているユーザー）は次のことができます。
+- ユーザーのアプリの紹介を削除できる
+- ユーザーのコメントを削除できる
+- ユーザーを削除できる（未実装）
+- Admin バッジが付く
+
+### 管理者権限の付与
+`users` の `isAdmin` を `TRUE` に設定してください。
+```sql
+UPDATE users SET "isAdmin"=TRUE WHERE "userId"=1;
+```
+
 ## ローカルでの動作確認
 Amazon S3 バケットの作成と GitHub 認証のアプリの登録、以下の環境変数の設定が必要です。
 
