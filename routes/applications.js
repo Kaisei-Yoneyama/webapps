@@ -192,7 +192,7 @@ router.get(
       where: { applicationId: req.params.applicationId }
     }).then((application) => {
       // アプリが存在して、作成者がリクエストしてきたユーザーなら編集ページを表示する
-      // 管理者も編集・削除できる
+      // 管理者も削除できる
       if (application && parseInt(application.userId) === parseInt(req.user.userId) || req.user.isAdmin) {
         return res.render('edit', { application, user: req.user, csrfToken: req.csrfToken() });
       } else {
@@ -216,8 +216,7 @@ router.post(
       where: { applicationId: req.params.applicationId }
     }).then((application) => {
       // アプリが存在して、作成者がリクエストしてきたユーザーなら編集内容を保存する
-      // 管理者も編集できる
-      if (application && parseInt(application.userId) === parseInt(req.user.userId) || req.user.isAdmin) {
+      if (application && parseInt(application.userId) === parseInt(req.user.userId)) {
         // バリデーションエラー
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
