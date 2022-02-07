@@ -24,9 +24,16 @@ const s3Client = new S3Client({
 });
 
 /**
+ * @typedef {object} S3Object オブジェクト
+ * @property {string} key オブジェクトのキー
+ * @property {string} type オブジェクトの MIME タイプ
+ * @property {string} url オブジェクト URL
+ */
+
+/**
  * ファイルを Amazon S3 に保存する
  * @param {Buffer | Uint8Array | ArrayBuffer} data 保存するファイルのデータ
- * @return {Promise<{type: string, name: string, url: string}>} 保存したファイルの情報を含む Promise
+ * @return {Promise<S3Object>} 保存したファイルの情報を表すオブジェクトで解決する Promise
  */
 async function putObject(data) {
   // Buffer からファイルタイプを取得する
