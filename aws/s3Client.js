@@ -54,8 +54,8 @@ async function putObject(data) {
 
   // ファイルの情報を返す
   return {
+    key: fileName,
     type: mimeType,
-    name: fileName,
     url: createObjectURL(BUCKET, REGION, fileName)
   };
 }
