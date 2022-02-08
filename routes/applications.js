@@ -23,8 +23,6 @@ dayjs.extend(timezone);
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: true });
 
-const marked = require('marked');
-
 const multer = require('multer');
 
 const upload = multer({
