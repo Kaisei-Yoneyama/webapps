@@ -268,7 +268,7 @@ router.post(
     // バリデーションエラー
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      next(404);
+      next(createError(404));
     }
 
     // 削除対象のアプリを取得する
