@@ -19,7 +19,7 @@ block content
           a.card-link.text-reset.text-decoration-none(href=application.applicationUrl) #{application.applicationUrl}
       if user && (user.userId == application.user.userId || user.isAdmin)
         div.card-body
-          a.btn.btn-primary(href=`/applications/${application.applicationId}/edit`) 編集
+          a.btn.btn-secondary(href=`/applications/${application.applicationId}/edit`) 編集
 
     if user
       div.my-4
