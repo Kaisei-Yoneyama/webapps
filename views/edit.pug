@@ -43,7 +43,9 @@ block content
           textarea#description.form-control(name="description" rows="5" maxlength="1000" placeholder="1000 字以内で入力してください" required) #{description}
         button.btn.btn-primary.mr(type="submit") 更新
 
-    h2.mt-4 紹介を削除する
+    hr.my-4
+
+    h2 紹介を削除する
     p この操作はもとに戻せません。
     form.mt-2(method="post" action=`/applications/${application.applicationId}/delete`)
       input(type="hidden" name="_csrf" value!=csrfToken)
