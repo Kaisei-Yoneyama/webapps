@@ -3,7 +3,8 @@
   object-fit: cover;
 }
 
-.card-text, p {
+.card-text:not(p.card-text.comment),
+p:not(p.card-text.comment) {
   white-space: pre-wrap !important;
 }
 

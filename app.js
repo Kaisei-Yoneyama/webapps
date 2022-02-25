@@ -99,8 +99,8 @@ app.use(helmet.contentSecurityPolicy({
     defaultSrc: [`'self'`],
     fontSrc: [`'self`, `cdn.jsdelivr.net`],
     imgSrc: [`'self'`, 'data:', `cdn.jsdelivr.net`, `${BUCKET}.s3.${REGION}.amazonaws.com`],
-    styleSrc: [`'self'`, `cdn.jsdelivr.net`],
-    scriptSrc: [`'self'`, `cdn.jsdelivr.net`],
+    styleSrc: [`'self'`, `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`],
+    scriptSrc: [`'self'`, `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`],
   }
 }));
 app.use(helmet.hidePoweredBy());
