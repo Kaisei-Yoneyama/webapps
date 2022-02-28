@@ -2,8 +2,8 @@
 作成した Web アプリケーションを紹介できるポートフォリオサービスです。
 
 ## 管理者機能
-![管理者](https://intense-eyrie-15263.herokuapp.com/images/readme/admin.png)
-管理者（ Admin バッジが付いているユーザー）は次のことができます。
+![管理者](https://user-images.githubusercontent.com/96284126/156023985-beebb03b-ab2a-47e3-bb50-a0c0b204b3a2.png)
+管理者（管理者バッジが付いているユーザー）は次のことができます。
 - ユーザーのアプリの紹介を削除できる
 - ユーザーのコメントを削除できる
 
