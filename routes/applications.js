@@ -181,7 +181,7 @@ router.get(
     // バリデーションエラー
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      next(createError(404));
+      return next(createError(404));
     }
 
     // 編集対象のアプリを取得する
@@ -268,7 +268,7 @@ router.post(
     // バリデーションエラー
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      next(createError(404));
+      return next(createError(404));
     }
 
     // 削除対象のアプリを取得する

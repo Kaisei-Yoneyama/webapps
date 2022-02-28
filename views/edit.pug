@@ -17,7 +17,7 @@ block content
             - var field = fields.get(error.param)
             li #{field}：#{error.msg}
   div.container.my-2
-    if user.userId == application.user.userId
+    if user.userId == application.userId
       //- multipart/form-data では _csrf をクエリ文字列として送信する
       form(method="post" action=`/applications/${application.applicationId}/edit?_csrf=${csrfToken}` enctype="multipart/form-data")
         div.mb-3

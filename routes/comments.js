@@ -20,7 +20,7 @@ router.post(
     // バリデーションエラー
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.redirect(`/applications/${req.params.applicationId}`);
+      return res.redirect(`/applications/${req.params.applicationId}`);
     }
 
     // 保存する
@@ -45,7 +45,7 @@ router.post(
     // バリデーションエラー
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      res.redirect(`/applications/${req.params.applicationId}`);
+      return res.redirect(`/applications/${req.params.applicationId}`);
     }
 
     // コメントが存在して、投稿者がリクエストしてきたユーザーなら削除する

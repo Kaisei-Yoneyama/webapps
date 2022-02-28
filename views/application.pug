@@ -17,7 +17,7 @@ block content
         li.list-group-item 
           i.bi.bi-arrow-up-right-square 
           a.card-link.text-reset.text-decoration-none(href=application.applicationUrl) #{application.applicationUrl}
-      if user && (user.userId == application.user.userId || user.isAdmin)
+      if user && (user.userId == application.userId || user.isAdmin)
         div.card-body
           a.btn.btn-secondary(href=`/applications/${application.applicationId}/edit`) 編集
 
@@ -40,7 +40,7 @@ block content
               a.text-reset.text-decoration-none(href=`https://github.com/${comment.user.userName}`) #{comment.user.userName} 
               if comment.user.isAdmin
                 span.badge.rounded-pill.bg-secondary 管理者
-              if comment.user.userId == application.user.userId
+              if comment.userId == application.userId
                 span.badge.rounded-pill.bg-primary.ms-1 投稿者
             div.card-body
               p.card-text.comment #{comment.comment}
