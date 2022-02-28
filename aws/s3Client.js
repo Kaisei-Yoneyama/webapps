@@ -86,7 +86,7 @@ async function deleteObject(key) {
  */
 function createObjectURL(bucket, region, key) {
   // https://bucket-name.s3.Region.amazonaws.com/key name
-  return `https://${bucket}.s3.${region}.amazonaws.com/${key}`
+  return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
 }
 
 module.exports = {
