@@ -151,7 +151,7 @@ router.get(
       Comment.findAll({
         include: [{ model: User, attributes: [ 'userId', 'userName', 'isAdmin' ] }],
         where: { applicationId: application.applicationId },
-        order: [['commentId', 'DESC']]
+        order: [['commentId', 'ASC']]
       }).then((comments) => {
         // 投稿・更新日時のフォーマット
         comments.forEach((comment) => {
