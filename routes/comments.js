@@ -15,7 +15,7 @@ router.post(
   ensureAuthenticated,
   csrfProtection,
   param('applicationId').notEmpty().isUUID(),
-  body('comment').notEmpty().isLength({ max: 200 }),
+  body('comment').notEmpty().isLength({ min: 1, max: 2000 }),
   (req, res, next) => {
     // バリデーションエラー
     const errors = validationResult(req);

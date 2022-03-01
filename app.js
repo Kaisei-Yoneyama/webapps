@@ -24,18 +24,18 @@ const Comment = require('./models/comment');
 const Like = require('./models/like');
 
 // User モデル
-User.sync().then(() => {
+User.sync({ alter: true }).then(() => {
   // Application モデル
   Application.belongsTo(User, { foreignKey: 'userId' });
-  Application.sync().then(() => {
+  Application.sync({ alter: true }).then(() => {
     // Comment モデル
     Comment.belongsTo(User, { foreignKey: 'userId' });
     Comment.belongsTo(Application, { foreignKey: 'applicationId' });
-    Comment.sync();
+    Comment.sync({ alter: true });
     // Like モデル
     Like.belongsTo(User, { foreignKey: 'userId' });
     Like.belongsTo(Application, { foreignKey: 'applicationId' });
-    Like.sync();
+    Like.sync({ alter: true });
   });
 });
 
