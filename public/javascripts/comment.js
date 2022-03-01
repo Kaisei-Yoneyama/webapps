@@ -38,7 +38,7 @@ if (editor) {
     spellChecker: false,
     placeholder: '2000 字以内で入力してください。',
     previewClass: [ 'hljs', 'editor-preview' ],
-    toolbar: [ 'bold', 'italic', 'strikethrough', 'heading', '|', 'code', 'quote', 'unordered-list', 'ordered-list', 'link', 'table', 'horizontal-rule', '|', 'preview', 'side-by-side', 'fullscreen', '|', 'undo', 'redo' ],
+    toolbar: [ 'bold', 'italic', 'strikethrough', 'heading', '|', 'code', 'quote', 'unordered-list', 'ordered-list', '|', 'link', 'table', 'horizontal-rule', '|', 'preview', 'side-by-side', 'fullscreen', '|', 'undo', 'redo' ],
     renderingConfig: {
       markedOptions,
       singleLineBreaks: false,
