@@ -17,11 +17,7 @@ document.querySelectorAll('.comment').forEach((comment) => {
 });
 
 document.querySelectorAll('.comment table').forEach((table) => {
-  table.classList.add('table', 'table-striped');
-});
-
-document.querySelectorAll('.comment th').forEach((th) => {
-  th.setAttribute('scope', 'row');
+  table.classList.add('table', 'table-bordered');
 });
 
 document.querySelectorAll('.comment blockquote').forEach((blockquote) => {
