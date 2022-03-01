@@ -97,9 +97,10 @@ const app = express();
 app.use(helmet.contentSecurityPolicy({
   directives: {
     defaultSrc: [`'self'`],
-    fontSrc: [`'self`, `cdn.jsdelivr.net`],
+    connectSrc: [`'self'`, `cdn.jsdelivr.net`],
+    fontSrc: [`'self'`, `cdn.jsdelivr.net`, `maxcdn.bootstrapcdn.com`],
     imgSrc: [`'self'`, 'data:', `cdn.jsdelivr.net`, `${BUCKET}.s3.${REGION}.amazonaws.com`],
-    styleSrc: [`'self'`, `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`],
+    styleSrc: [`'self'`, `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`, `maxcdn.bootstrapcdn.com`],
     scriptSrc: [`'self'`, `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`],
   }
 }));

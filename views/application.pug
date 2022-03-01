@@ -21,16 +21,6 @@ block content
         div.card-body
           a.btn.btn-secondary(href=`/applications/${application.applicationId}/edit`) 編集
 
-    if user
-      div.my-4
-        form(method="post" action=`/applications/${application.applicationId}/comments`)
-          input(type="hidden" name="_csrf" value!=csrfToken)
-          div.mb-3
-            label.form-label(for="comment") コメント
-            textarea#comment.form-control(type="text" name="comment" rows="5" maxlength="2000" aria-describedby="comment-help" required)
-            div#comment-help.form-text Markdown としてパースされます。2000 字以内で入力してください。
-          button.btn.btn-primary.mr(type="submit") 投稿
-
     div.my-4
       if comments.length
         each comment in comments
@@ -44,12 +34,31 @@ block content
                 span.badge.rounded-pill.bg-primary.ms-1 投稿者
             div.card-body
               p.card-text.comment #{comment.comment}
+            div.card-footer.d-flex.justify-content-between.align-items-center
+              span.text-muted #{comment.formattedCreatedAt}
               if user && (user.userId == comment.userId || user.isAdmin)
                 form(method="post" action=`/applications/${application.applicationId}/comments/${comment.commentId}/delete`)
                   input(type="hidden" name="_csrf" value!=csrfToken)
-                  button.btn.btn-danger(type="submit") 削除
-            div.card-footer.text-muted.d-inline #{comment.formattedCreatedAt}
+                  button.btn.btn-danger.btn-sm(type="submit") 削除
+
+    if user
+      div.my-4
+        form(method="post" action=`/applications/${application.applicationId}/comments`)
+          input(type="hidden" name="_csrf" value!=csrfToken)
+          div.mb-3
+            //- label.form-label(for="comment") コメント
+            textarea#editor(type="text" name="comment" rows="5" maxlength="200")
+          button.btn.btn-outline-dark.d-block.ms-auto(type="submit") 投稿
+
+        //- form(method="post" action=`/applications/${application.applicationId}/comments`)
+        //-   input(type="hidden" name="_csrf" value!=csrfToken)
+        //-   div.mb-3
+        //-     label.form-label(for="comment") コメント
+        //-     textarea#comment.form-control(type="text" name="comment" rows="5" maxlength="200" aria-describedby="comment-help" required)
+        //-     div#comment-help.form-text Markdown としてパースされます。200 字以内で入力してください。
+        //-   button.btn.btn-primary.mr(type="submit") 投稿
   script(src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.6/purify.min.js" integrity="sha512-DJjvM/U3zCRpzrYboJgg23iLHapWcS2rlo7Ni18Cdv+FMs6b3gUF7hQihztj4uVkHHfUwk7dha97jVzRqUJ7hg==" crossorigin="anonymous" referrerpolicy="no-referrer")
   script(src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js")
-  script(src="https://cdn.jsdelivr.net/npm/marked/marked.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/marked@4.0.12/lib/marked.umd.min.js")
+  script(src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js")
   script(src="/javascripts/comment.js") 
