@@ -108,7 +108,7 @@ router.post('/',
     }
 
     // S3 とデータベースに保存する
-    s3Client.putObject(req.file.buffer)
+    s3Client.putObject(req.user.userId, req.file.buffer)
       .then((file) => {
         Application.create({
           applicationId: uuid.v4(),
@@ -230,12 +230,13 @@ router.post(
 
         // S3 オブジェクトのキーを取得する
         const thumbnail = application.applicationThumbnail;
-        const key = thumbnail.split('/').pop();
+        const key = new URL(thumbnail).pathname.slice(1);
+        console.log(key);
 
         // 既存のサムネイルを削除してから更新する
         s3Client.deleteObject(key)
           .then(() => {
-            s3Client.putObject(req.file.buffer)
+            s3Client.putObject(req.user.userId, req.file.buffer)
               .then((file) => {
                 application.update({
                   applicationId: application.applicationId,
@@ -281,7 +282,8 @@ router.post(
 
         // S3 オブジェクトのキーを取得する
         const thumbnail = application.applicationThumbnail;
-        const key = thumbnail.split('/').pop();
+        const key = new URL(thumbnail).pathname.slice(1);
+        console.log(key);
 
         // S3 とデータベースから削除する
         s3Client.deleteObject(key).then(() => {

@@ -32,14 +32,17 @@ const s3Client = new S3Client({
 
 /**
  * ファイルを Amazon S3 に保存する
+ * @param {string | null} [prefix] プレフィックス
  * @param {Buffer | Uint8Array | ArrayBuffer} data 保存するファイルのデータ
- * @return {Promise<S3Object>} 保存した S3 オブジェクトの情報を表すオブジェクトで解決する Promise
+ * @return {Promise<S3Object>} S3Object で解決する Promise
  */
-async function putObject(data) {
+async function putObject(prefix, data) {
   // Buffer からファイルタイプを取得する
   const fileTypeResult = await FileType.fromBuffer(data);
-  const fileName = `${uuid.v4()}.${fileTypeResult.ext}`;
   const mimeType = fileTypeResult.mime;
+  const fileName = prefix
+    ? `${prefix}/${uuid.v4()}.${fileTypeResult.ext}`
+    : `${uuid.v4()}.${fileTypeResult.ext}`;
 
   const command = new PutObjectCommand({
     ContentType: mimeType,
