@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 node:14.15.4
+FROM --platform=linux/x86_64 node:16.15.0
 
 RUN apt-get update
 RUN apt-get install -y locales vim tmux
