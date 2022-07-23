@@ -94,22 +94,21 @@ const app = express();
 
 // サムネイルを Amazon S3 に保存していたり
 // Bootstrap の CDN を使用しているため個別に指定する
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: [`'self'`],
-    connectSrc: [`'self'`, `cdn.jsdelivr.net`],
-    fontSrc: [`'self'`, `cdn.jsdelivr.net`, `maxcdn.bootstrapcdn.com`],
-    imgSrc: [`'self'`, 'data:', `cdn.jsdelivr.net`, `${BUCKET}.s3.${REGION}.amazonaws.com`],
-    styleSrc: [`'self'`, `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`, `maxcdn.bootstrapcdn.com`],
-    scriptSrc: [`'self'`, `cdn.jsdelivr.net`, `cdnjs.cloudflare.com`],
-  }
-}));
-app.use(helmet.hidePoweredBy());
-app.use(helmet.hsts());
-app.use(helmet.ieNoOpen());
-app.use(helmet.noSniff());
-app.use(helmet.frameguard());
-app.use(helmet.xssFilter());
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: [ "'self'" ],
+        connectSrc: [ "'self'", "cdn.jsdelivr.net" ],
+        fontSrc: [ "'self'", "cdn.jsdelivr.net", "maxcdn.bootstrapcdn.com" ],
+        imgSrc: [ "'self'", "data:", "cdn.jsdelivr.net", `${BUCKET}.s3.${REGION}.amazonaws.com` ],
+        styleSrc: [ "'self'", "cdn.jsdelivr.net", "cdnjs.cloudflare.com", "maxcdn.bootstrapcdn.com" ],
+        scriptSrc: [ "'self'", "cdn.jsdelivr.net", "cdnjs.cloudflare.com" ],
+      }
+    }
+  })
+);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
